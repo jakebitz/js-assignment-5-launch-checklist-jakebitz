@@ -3,111 +3,105 @@
 
 function addDestinationInfo(document, name, diameter, star, distance, moons, imageUrl) {
    // Here is the HTML formatting for our mission target div.
-   /*
+   document.innerHTML = `
                 <h2>Mission Destination</h2>
                 <ol>
-                    <li>Name: </li>
-                    <li>Diameter: </li>
+                    <li>Name: ${name}</li>
+                    <li>Diameter: ${diameter}</li>
                     <li>Star: ${star}</li>
-                    <li>Distance from Earth: </li>
-                    <li>Number of Moons: </li>
+                    <li>Distance from Earth:${distance} </li>
+                    <li>Number of Moons: ${moons} </li>
                 </ol>
-                <img src="">
-   */
+                <img src=${imageUrl}>`
+   
 }
 
 function validateInput(testInput) {
-        testInput.preventDefault()
-        let pilot = document.getElementById("pilotName");
-        let copilot = document.querySelector("input[name=copilotName]");
-        let fuelLevel = document.querySelector("input[name=fuelLevel]");
-        let cargoMass = document.querySelector("input[name=cargoMass]");
-        // console.log('This is the input element inside your form: ',pilot);
-        // inputTerm = validateTermInput.value;
-        if (pilot.value.trim() === "") {
-            //  console.log("in if statement")
-            alert("Please Enter a pilot's name");
-            testInput.preventDefault()
-            return;
+      
+        if (testInput === "" || testInput == null) {
+    
+            return "Empty";
         }
-        if (typeof(pilot.value) !== typeof("String")) {
-              console.log(pilot.value.typeof)
-            alert("Please do not enter numbers for pilot's name ");
-            testInput.preventDefault()
-            return;
+        if (isNaN(testInput)) {
+              
+            return "is not a number";
         }
-         if (copilot.value.trim() === "") {
-            //  console.log("in 2if statement")
-            alert("Please Enter a copilot's name");
-            testInput.preventDefault()
-
-            return;
+        if (!isNaN(testInput)) {
+            
+            return "is a number";
         }
-        if (typeof(copilot.value) !== typeof("String")) {
-            //  console.log("in if statement")
-            alert("Please do not enter numbers for copilot's name ");
-            testInput.preventDefault()
-
-            return;
-        }
-        if (fuelLevel.value.trim() === "") {
-            // console.log("in if statement")
-           alert("Please Enter a fuel level");
-           testInput.preventDefault()
-
-           return;
-       }
-        if (isNaN(fuelLevel.value)) {
-            //  console.log("in if statement")
-            alert("Please only enter a numerical value for fuel level");
-            testInput.preventDefault()
-
-            return;
-        }
-        if (cargoMass.value.trim() === "") {
-            // console.log("in 2if statement")
-           alert("Please Enter a cargo Mass");
-           testInput.preventDefault()
-
-           return;
-        }
-        if (isNaN(cargoMass.value)) {
-            //  console.log("in if statement")
-            alert("Please only enter a numerical value for cargo mass");
-            testInput.preventDefault()
-
-            return;
-        }
-
-     }
-     window.addEventListener("load", function () {
-        let form = document.querySelector("form");
-        //  console.log('This is your form: ', form);
-        form.addEventListener("submit", validateInput);
-    });
+        
+}
+    
    
 
 
 function formSubmission(document, list, pilot, copilot, fuelLevel, cargoLevel) {
 
-validPilot = validateInput(pilot);
-validCopilot = validateInput(copilot);
-validFuelLevel = validateInput(fuelLevel);
-validCargoLevel = validateInput(cargoLevel);
-    
+const validPilot = validateInput(pilot);
+const validCopilot = validateInput(copilot);
+const validFuelLevel = validateInput(fuelLevel);
+const validCargoLevel = validateInput(cargoLevel);
+const results = [validPilot,validCopilot,validFuelLevel,validCargoLevel];
+const text = [];
+for(let i = 0; i<list.length;i++){
+list[i].style.visibility = "visible";
+}
+
+for(let i = 0; i<results.length;i++){
+    if(results[i] === "Empty"){
+        alert("All fields required");
+        text.push("hi");
+        break;
+    }
+}
+if(text.includes("hi")){
+    document.innerHTML = "Shuttle not ready for launch";
+    document.style.color = "rgb(199, 37, 78)";
+}else{
+    document.innerHTML = "Shuttle is ready for launch";
+    document.style.color = "rgb(65, 159, 106)";
+}
+if(validPilot === "is a number" || validPilot === "is a number" ){
+    alert("make sure pilot and copilot are valid inputs");
+    list[0].innerHTML = `Pilot ${pilot} is not ready for launch`;
+    list[1].innerHTML = `Co-pilot ${copilot} is not ready for launch`;
+    text.push("hi");
+}else if(validPilot === "is not a number" || validPilot === "is not a number" ){
+    list[0].innerHTML = `Pilot ${pilot} is ready for launch`;
+    list[1].innerHTML = `Co-pilot ${copilot} is ready for launch`;
+}if(validFuelLevel === "is not a number" || validCargoLevel === "is not a number" ){
+   alert("Make sure your fuel and cargo are valid inputs")
+}if(fuelLevel < 10000){
+    list[2].innerHTML = `Fuel level to low for launch`
+    text.push("hi");
+}else{
+    list[2].innerHTML = `Fuel level high enough for launch` 
+}if(cargoLevel > 10000){
+    list[3].innerHTML = `Cargo mass to high for launch`
+    text.push("hi");
+}else{
+    list[3].innerHTML = `Cargo mass low enough for launch`
+}
+
+
 
 }
 
 async function myFetch() {
     let planetsReturned;
 
-    planetsReturned = await fetch().then( function(response) {
+    planetsReturned = await fetch("https://handlers.education.launchcode.org/static/planets.json").then( function(response) {
+        return response.json();
         });
 
     return planetsReturned;
 }
 
 function pickPlanet(planets) {
+    //get random number max planets.length [8]
+    let index = Math.floor(Math.random()*planets.length);
+    return planets[index];
 }
 
 module.exports.addDestinationInfo = addDestinationInfo;
